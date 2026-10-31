@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dashboard{% endblock %} · {{ brand }} Motorcycle Management</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏍️</text></svg>">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<input type="checkbox" id="navtoggle" class="navtoggle">
+<aside class="sidebar">
+  <a class="logo" href="{{ url_for('dashboard') }}">
+    <span class="logo-mark">⚡</span>
+    <span><strong>{{ brand }}</strong><small>by {{ company }}</small></span>
+  </a>
+  <nav>
+    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}"><i>📊</i> Dashboard</a>
+    <a href="{{ url_for('track') }}" class="{{ 'active' if request.endpoint == 'track' }}"><i>📍</i> Track Order</a>
+    <div class="nav-title">Manage</div>
+    {% for k in NAV %}
+      <a href="{{ url_for('list_page', key=k) }}" class="{{ 'active' if key is defined and key == k }}"><i>{{ ENTITIES[k].icon }}</i> {{ ENTITIES[k].title }}</a>
+    {% endfor %}
+    <div class="nav-title">SQL</div>
+    <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint == 'reports' }}"><i>📑</i> SQL Reports</a>
+    <a href="{{ url_for('console') }}" class="{{ 'active' if request.endpoint == 'console' }}"><i>⌨️</i> SQL Console</a>
+    <a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' }}"><i>🗺️</i> ERD &amp; Project</a>
+  </nav>
+  <div class="dbbadge" title="{{ engine_note }}"><span class="dot"></span> {{ engine_label }} connected</div>
+</aside>
+
+<main>
+  <header class="topbar">
+    <label for="navtoggle" class="burger">☰</label>
+    <div class="titleblock"><h1>{% block heading %}{{ tagline }}{% endblock %}</h1></div>
+    <form action="{{ url_for('track') }}" method="get" class="trackbar">
+      <input name="no" placeholder="Track order e.g. RVN-2026-0009" value="">
+      <button>Track</button>
+    </form>
+  </header>
+
+  <section class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        {% if cat == 'sql' %}
+          <div class="sqlbox"><span>SQL executed</span><code>{{ msg }}</code></div>
+        {% else %}
+          <div class="alert {{ cat }}">{{ msg }}</div>
+        {% endif %}
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </section>
+  <footer>{{ brand }} · {{ company }} · ERD → {{ engine_label }} → Flask · prices in PKR</footer>
+</main>
+</body>
+</html>

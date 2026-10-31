@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ ent.title }}{% endblock %}
+{% block heading %}{{ ent.title }}{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <form method="get" class="search">
+    <input name="q" value="{{ q }}" placeholder="Search {{ ent.title|lower }}…">
+    {% if ent.filter_status %}
+      <select name="status"><option value="">All statuses</option>
+      {% for s in ent.filter_status %}<option {{ 'selected' if s == st }}>{{ s }}</option>{% endfor %}</select>
+    {% endif %}
+    <button class="btn ghost">Search</button>
+    {% if q or st %}<a class="btn ghost" href="{{ url_for('list_page', key=key) }}">Clear</a>{% endif %}
+  </form>
+  <a class="btn" href="{{ url_for('new_page', key=key) }}">＋ Add {{ ent.singular }}</a>
+</div>
+<div class="card flush">
+  <div class="scroll"><table class="tbl">
+    <thead><tr>{% for c in ent.cols %}<th>{{ c[1] }}</th>{% endfor %}<th class="right">Actions</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+      {% for c in ent.cols %}
+        {% set kind = c[2] if c|length > 2 else 'text' %}
+        <td>
+          {% if kind == 'money' %}{{ r[c[0]]|money }}
+          {% elif kind == 'badge' %}<span class="badge {{ r[c[0]]|badge }}">{{ r[c[0]] }}</span>
+          {% elif kind == 'link' %}<a href="{{ url_for('order_detail', order_id=r[ent.pk]) }}"><b>{{ r[c[0]] }}</b></a>
+          {% else %}{{ r[c[0]] if r[c[0]] is not none and r[c[0]] != '' else '—' }}{% endif %}
+        </td>
+      {% endfor %}
+        <td class="right actions">
+          {% if ent.detail %}<a title="View" href="{{ url_for('order_detail', order_id=r[ent.pk]) }}">👁</a>{% endif %}
+          <a title="Edit" href="{{ url_for('edit_page', key=key, pk=r[ent.pk]) }}">✏️</a>
+          <form method="post" action="{{ url_for('delete_page', key=key, pk=r[ent.pk]) }}" onsubmit="return confirm('Delete this {{ ent.singular|lower }}?')">
+            <button title="Delete" class="iconbtn">🗑</button></form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="{{ ent.cols|length + 1 }}" class="empty">No records found.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+<p class="muted">{{ rows|length }} record(s)</p>
+{% endblock %}

@@ -1,0 +1,5 @@
+Flask>=3.0,<4
+PyMySQL>=1.1
+cryptography>=42
+certifi>=2024.2.2
+gunicorn>=22

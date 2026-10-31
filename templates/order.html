@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}{{ o.order_no }}{% endblock %}
+{% block heading %}Order {{ o.order_no }}{% endblock %}
+{% block content %}
+<div class="toolbar">
+  <span class="badge big {{ o.status|badge }}">{{ o.status }}</span>
+  <div class="chips">
+    <a class="btn ghost" href="{{ url_for('edit_page', key='orders', pk=o.order_id) }}">✏️ Edit</a>
+    <a class="btn" href="{{ url_for('new_page', key='payments', order_id=o.order_id) }}">＋ Add payment</a>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Order progress</h3>
+  {% if o.status == 'Cancelled' %}<div class="alert error">This order was cancelled.</div>
+  {% else %}
+  <ol class="tracker">{% for s in steps %}<li class="{{ 'done' if loop.index0 <= idx }}{{ ' current' if loop.index0 == idx }}"><span>{{ loop.index }}</span>{{ s }}</li>{% endfor %}</ol>
+  {% endif %}
+</div>
+
+<div class="grid4">
+  <div class="card"><h4>👤 Customer</h4><b>{{ o.customer_name }}</b><p>{{ o.customer_city }}<br>{{ o.customer_phone }}<br>{{ o.customer_email or '' }}</p></div>
+  <div class="card"><h4>📋 Model</h4><b>{{ o.model_name }} {{ o.variant }}</b><p>{{ o.engine_cc }} cc + {{ o.model_kwh|num }} kWh hybrid<br>Range {{ o.range_km|num }} km · Top {{ o.top_speed_kmh }} km/h<br>Base {{ o.base_price|money }}</p></div>
+  <div class="card"><h4>🏍️ Bike unit</h4>{% if o.vin %}<b>{{ o.vin }}</b><p>{{ o.color }}<br><span class="badge {{ o.bike_status|badge }}">{{ o.bike_status }}</span></p>{% else %}<p class="muted">Not assigned yet</p>{% endif %}</div>
+  <div class="card"><h4>🧑‍🔧 Staff</h4>{% if o.staff_name %}<b>{{ o.staff_name }}</b><p>{{ o.staff_role }}<br>{{ o.staff_phone }}</p>{% else %}<p class="muted">Not assigned yet</p>{% endif %}</div>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Order details</h3>
+    <table class="kv">
+      <tr><th>Items</th><td>{{ o.items_desc }}</td></tr><tr><th>Quantity</th><td>{{ o.quantity }}</td></tr>
+      <tr><th>Order date</th><td>{{ o.order_date }}</td></tr><tr><th>Delivery date</th><td>{{ o.delivery_date or '—' }}</td></tr>
+      <tr><th>Total price</th><td><b>{{ o.total_price|money }}</b></td></tr>
+      <tr><th>Paid</th><td class="green-t">{{ paid|money }}</td></tr>
+      <tr><th>Balance due</th><td class="{{ 'red-t' if balance > 0 else 'green-t' }}"><b>{{ balance|money }}</b></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Payments</h3>
+    <table class="tbl"><thead><tr><th>Date</th><th>Method</th><th>Amount</th><th>Ref</th></tr></thead><tbody>
+    {% for p in pays %}<tr><td>{{ p.payment_date }}</td><td>{{ p.method }}</td><td>{{ p.amount|money }}</td><td>{{ p.reference_no or '—' }}</td></tr>
+    {% else %}<tr><td colspan="4" class="empty">No payments yet.</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</div>
+{% endblock %}

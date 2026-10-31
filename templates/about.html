@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}ERD & Project{% endblock %}
+{% block heading %}ERD &amp; Project{% endblock %}
+{% block content %}
+<div class="grid2">
+  <div class="card"><h3>Project</h3>
+    <table class="kv">{% for k, v in project.items() %}<tr><th>{{ k }}</th><td>{{ v }}</td></tr>{% endfor %}
+    <tr><th>Database</th><td>{{ engine_label }} — {{ engine_note }}</td></tr></table>
+    <h3 class="mt">Architecture</h3>
+<pre class="sql">Browser (HTML + CSS)
+   │  HTTP forms (GET / POST)
+   ▼
+Flask app (app.py)  ── validation · business rules · SQL building
+   │  parameterised SQL (db.py)
+   ▼
+{{ engine_label }} database  ── 7 tables · 6 FKs · CHECK / UNIQUE · views</pre>
+  </div>
+  <div class="card"><h3>Tables &amp; row counts</h3>
+    <table class="tbl"><thead><tr><th>Table</th><th>Rows</th></tr></thead><tbody>
+    {% for t, n in counts %}<tr><td>{{ t }}</td><td>{{ n }}</td></tr>{% endfor %}</tbody></table>
+  </div>
+</div>
+<div class="card"><h3>Entity Relationship Diagram</h3>
+  <img class="erd" src="{{ url_for('static', filename='erd.png') }}" alt="ERD of the REVON database">
+</div>
+{% endblock %}

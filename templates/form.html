@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Edit' if editing else 'Add' }} {{ ent.singular }}{% endblock %}
+{% block heading %}{{ 'Edit' if editing else 'Add' }} {{ ent.singular }}{% endblock %}
+{% block content %}
+<div class="card formcard">
+  <form method="post" class="formgrid" autocomplete="off">
+    {% for f in ent.fields %}
+      <label class="field {{ 'wide' if f.name in ('items_desc','address','description') }}">
+        <span>{{ f.label }}{% if f.req %} <em>*</em>{% endif %}</span>
+        {% set val = values.get(f.name) %}
+        {% if f.kind == 'select' %}
+          <select name="{{ f.name }}">{% for c in f.choices %}<option {{ 'selected' if val == c }}>{{ c }}</option>{% endfor %}</select>
+        {% elif f.kind == 'fk' %}
+          <select name="{{ f.name }}">
+            <option value="">{{ '— select —' if f.req else '— none —' }}</option>
+            {% for id, label in options[f.name] %}<option value="{{ id }}" {{ 'selected' if val|string == id|string }}>{{ label }}</option>{% endfor %}
+          </select>
+        {% elif f.kind == 'date' %}<input type="date" name="{{ f.name }}" value="{{ val or '' }}">
+        {% elif f.kind in ('int','number') %}<input type="number" name="{{ f.name }}" step="{{ f.step or 1 }}" value="{{ val if val is not none else '' }}">
+        {% elif f.kind == 'email' %}<input type="email" name="{{ f.name }}" value="{{ val or '' }}">
+        {% else %}<input type="text" name="{{ f.name }}" value="{{ val or '' }}">{% endif %}
+        {% if f.help %}<small>{{ f.help }}</small>{% endif %}
+      </label>
+    {% endfor %}
+    <div class="formactions wide">
+      <button class="btn">{{ 'Save changes' if editing else 'Save ' + ent.singular|lower }}</button>
+      <a class="btn ghost" href="{{ url_for('list_page', key=key) }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}SQL Console{% endblock %}
+{% block heading %}SQL Console (read-only){% endblock %}
+{% block content %}
+<div class="card">
+  <form method="post">
+    <textarea name="sql" rows="6" spellcheck="false" class="sqlinput">{{ sql }}</textarea>
+    <div class="toolbar"><button class="btn">▶ Run query</button>
+    <span class="muted">Tables: customers, staff, bikes, models, orders, payments, service_records · Views: v_order_details, v_bike_service_summary</span></div>
+  </form>
+</div>
+{% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+{% if rows is not none %}
+<div class="card flush"><div class="scroll"><table class="tbl">
+  {% if rows %}<thead><tr>{% for c in rows[0].keys() %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for r in rows %}<tr>{% for v in r.values() %}<td>{{ v if v is not none else '—' }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+  {% else %}<tbody><tr><td class="empty">No rows.</td></tr></tbody>{% endif %}
+</table></div></div><p class="muted">{{ rows|length }} row(s)</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}SQL Reports{% endblock %}
+{% block heading %}SQL Reports{% endblock %}
+{% block content %}
+<div class="reportlayout">
+  <div class="card flush reportlist">
+    {% for r in reports %}<a href="{{ url_for('reports', r=loop.index) }}" class="{{ 'active' if loop.index == rid }}"><b>{{ loop.index }}. {{ r[0] }}</b><small>{{ r[1] }}</small></a>{% endfor %}
+  </div>
+  <div>
+    <div class="card"><h3>{{ rid }}. {{ title }}</h3><p class="muted">{{ desc }}</p><pre class="sql">{{ sql }}</pre></div>
+    <div class="card flush"><div class="scroll"><table class="tbl">
+      {% if rows %}<thead><tr>{% for c in rows[0].keys() %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+      <tbody>{% for r in rows %}<tr>{% for v in r.values() %}<td>{{ v|num if v is number else (v if v is not none else '—') }}</td>{% endfor %}</tr>{% endfor %}</tbody>
+      {% else %}<tbody><tr><td class="empty">Query returned no rows.</td></tr></tbody>{% endif %}
+    </table></div></div>
+    <p class="muted">{{ rows|length }} row(s)</p>
+  </div>
+</div>
+{% endblock %}

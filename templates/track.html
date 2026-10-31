@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Track Order{% endblock %}
+{% block heading %}Track an order{% endblock %}
+{% block content %}
+<div class="card formcard">
+  <p>Enter an order number to see its progress, assigned bike, staff and payments.</p>
+  <form method="get" class="search big">
+    <input name="no" value="{{ no }}" placeholder="e.g. RVN-2026-0009" autofocus>
+    <button class="btn">Track order</button>
+  </form>
+  <p class="muted">Try: <a href="{{ url_for('track', no='RVN-2026-0009') }}">RVN-2026-0009</a> ·
+  <a href="{{ url_for('track', no='RVN-2026-0006') }}">RVN-2026-0006</a> · <a href="{{ url_for('track', no='RVN-2026-0001') }}">RVN-2026-0001</a></p>
+</div>
+{% endblock %}

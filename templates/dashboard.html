@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Operations Dashboard{% endblock %}
+{% block content %}
+<div class="kpis">
+  <div class="kpi"><span>Orders</span><b>{{ s.orders|num }}</b><small>{{ s.units|num }} bikes ordered</small></div>
+  <div class="kpi"><span>Revenue</span><b>{{ s.revenue|money }}</b><small>excluding cancelled</small></div>
+  <div class="kpi green"><span>Payments received</span><b>{{ s.paid|money }}</b><small>{{ s.customers }} customers</small></div>
+  <div class="kpi red"><span>Outstanding balance</span><b>{{ s.outstanding|money }}</b><small>{{ s.bikes }} bikes in inventory</small></div>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Orders by status</h3>
+    <table class="tbl"><thead><tr><th>Status</th><th>Orders</th><th>Value</th></tr></thead><tbody>
+    {% for r in by_status %}<tr><td><span class="badge {{ r.status|badge }}">{{ r.status }}</span></td><td>{{ r.n }}</td><td>{{ r.value|money }}</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+  <div class="card">
+    <h3>Top models by revenue</h3>
+    {% for m in top_models %}
+      <div class="bar"><div class="barlabel"><span>{{ m.model_name }} {{ m.variant }}</span><b>{{ m.revenue|money }} · {{ m.units|num }} units</b></div>
+      <div class="barbg"><div class="barfill" style="width: {{ (m.revenue / max_rev * 100)|round(0) }}%"></div></div></div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Bike inventory status</h3>
+    <div class="chips">{% for r in bike_status %}<span class="badge {{ r.status|badge }}">{{ r.status }}: {{ r.n }}</span>{% endfor %}</div>
+    <h3 class="mt">Staff status</h3>
+    <div class="chips">{% for r in staff_status %}<span class="badge {{ r.status|badge }}">{{ r.status }}: {{ r.n }}</span>{% endfor %}</div>
+  </div>
+  <div class="card">
+    <h3>Quick actions</h3>
+    <div class="chips">
+      <a class="btn" href="{{ url_for('new_page', key='orders') }}">＋ New order</a>
+      <a class="btn ghost" href="{{ url_for('new_page', key='customers') }}">＋ Customer</a>
+      <a class="btn ghost" href="{{ url_for('new_page', key='payments') }}">＋ Payment</a>
+      <a class="btn ghost" href="{{ url_for('new_page', key='service') }}">＋ Service</a>
+    </div>
+    <p class="muted mt">Every figure here is a live SQL query (<code>COUNT</code>, <code>SUM</code>, <code>GROUP BY</code>, <code>JOIN</code>).</p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Recent orders</h3>
+  <div class="scroll"><table class="tbl"><thead><tr><th>Order</th><th>Customer</th><th>Model</th><th>Date</th><th>Total</th><th>Paid</th><th>Status</th></tr></thead><tbody>
+  {% for r in recent %}<tr>
+    <td><a href="{{ url_for('order_detail', order_id=r.order_id) }}">{{ r.order_no }}</a></td><td>{{ r.customer_name }}</td>
+    <td>{{ r.model_name }} {{ r.variant }}</td><td>{{ r.order_date }}</td><td>{{ r.total_price|money }}</td><td>{{ r.paid|money }}</td>
+    <td><span class="badge {{ r.status|badge }}">{{ r.status }}</span></td></tr>{% endfor %}
+  </tbody></table></div>
+</div>
+{% endblock %}
