@@ -1,4 +1,4 @@
-# 🏍️ REVON – Hybrid Motorcycle Management System
+# REVON – Hybrid Motorcycle Management System
 
 **A web-based database application: ERD → MySQL relational database → Flask web interface**
 for a hybrid (EV + ICE) motorcycle business — bookings, bike inventory, models & pricing, staff, payments and service history.
@@ -9,32 +9,23 @@ for a hybrid (EV + ICE) motorcycle business — bookings, bike inventory, models
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-### 🌐 Live demo: `https://<your-project>.vercel.app` *(add your Vercel URL after deploying – see [Section 10](#10-deploy-to-vercel))*
-
-> Built for **NEXGEN**'s hybrid motorcycle **REVON**: dual-mode (EV + petrol) bikes with Eco / City / Sport modes,
-> regenerative braking and anti-theft. Prices are in **PKR**; sample data is fictional.
-
-## ✨ Highlights
-
-- **7 tables** in 3NF, designed from an **ERD**, with **6 foreign keys**, **21 CHECK** and **6 UNIQUE** constraints
-- **Full CRUD** web forms for every table, plus search, filters and **order tracking**
-- **Live dashboard** and **9 SQL reports** (INNER / LEFT / SELF JOIN, GROUP BY, HAVING, sub-queries, NOT IN)
-- **SQL made visible:** every save shows the SQL statement that ran, and constraint errors are explained clearly
-- Parameterised queries (no SQL injection) and transactions (COMMIT / ROLLBACK)
-- **Two database engines:** MySQL (for Workbench demos) or SQLite (zero setup) – same SQL, same app
-- **One-click start** on Windows (`START_HERE.bat`) and macOS/Linux (`./start.sh`)
-- **Vercel-ready** serverless deployment (frontend + backend in one project)
-
-## ⚡ Quick start
-
-| Platform | Do this |
-|----------|---------|
-| **Windows** | Install Python 3.10+ (tick *Add to PATH*) → double-click **`START_HERE.bat`** → type your MySQL root password (or press Enter for SQLite). Browser opens `http://127.0.0.1:5000`. |
-| **macOS / Linux** | `./start.sh` (SQLite) or `MYSQL_PASSWORD=secret ./start.sh mysql` |
-| **Manual** | `pip install -r requirements.txt` → `DB_ENGINE=sqlite python app.py` |
+### 🌐 Live demo: `https://nexgen-solution-hub.vercel.app/p`
 
 ## Table of Contents
-1. [Project Overview](#1-project-overview) · 2. [Features](#2-features) · 3. [Technology Stack](#3-technology-stack) · 4. [Folder Structure](#4-folder-structure) · 5. [ERD](#5-entity-relationship-diagram-erd) · 6. [Data Dictionary](#6-database-design--data-dictionary) · 7. [SQL Concepts](#7-sql-concepts-covered) · 8. [Run with MySQL](#8-run-locally--option-a-mysql--workbench) · 9. [Run with SQLite](#9-run-locally--option-b-sqlite) · 10. [Deploy to Vercel](#10-deploy-to-vercel) · 11. [Push to GitHub](#11-push-to-github) · 12. [User Guide](#12-using-the-application) · 13. [How it works](#13-how-erd-sql-and-web-interface-work-together) · 14. [Constraint tests](#14-testing-constraints-demo-script) · 15. [Troubleshooting](#15-troubleshooting) · 16. [Roadmap](#16-roadmap)
+
+1. [Project Overview](#1-project-overview)
+2. [Features](#2-features)
+3. [Technology Stack](#3-technology-stack)
+4. [Folder Structure](#4-folder-structure)
+5. [Entity Relationship Diagram (ERD)](#5-entity-relationship-diagram-erd)
+6. [Database Design – Data Dictionary](#6-database-design--data-dictionary)
+7. [SQL Concepts Covered](#7-sql-concepts-covered)
+8. [Using the Application](#8-using-the-application)
+9. [How ERD, SQL and Web Interface Work Together](#9-how-erd-sql-and-web-interface-work-together)
+10. [Testing Constraints](#10-testing-constraints)
+11. [Troubleshooting](#11-troubleshooting)
+12. [Future Enhancements](#12-future-enhancements)
+13. [License](#13-license)
 
 ---
 
@@ -69,15 +60,14 @@ This project designs that business as an **Entity Relationship Diagram**, conver
 | Backend | **Python 3.10+**, **Flask 3**, **PyMySQL** |
 | Frontend | HTML5 (Jinja2 templates), custom responsive CSS, no JS framework |
 | Hosting | **Vercel** (Python serverless function) + any hosted MySQL |
-| Diagram | Graphviz (`docs/generate_erd.py`) |
 
 ## 4. Folder Structure
 
 ```
 revon-tms/
 ├── app.py                  # Flask app: routes, generic CRUD, business rules, reports, console
-├── db.py                   # Database layer (MySQL / SQLite), friendly constraint errors
-├── config.py               # Settings (all overridable via environment variables)
+├── db.py                   # Database layer (MySQL)
+├── config.py               # Settings
 ├── requirements.txt        # Flask, PyMySQL, cryptography, certifi, gunicorn
 ├── vercel.json             # Vercel build + routing
 ├── api/index.py            # Vercel serverless entry point (exports the Flask app)
@@ -95,11 +85,11 @@ revon-tms/
 ├── templates/              # Jinja2 pages: base, dashboard, list, form, order, track,
 │                           # reports, console, about, error
 ├── static/
-│   ├── css/style.css       # Responsive design (light + dark)
+│   ├── css/style.css       # Responsive design 
 │   └── erd.png             # ERD shown inside the app
 └── docs/
     ├── ERD.png / ERD.svg   # Entity Relationship Diagram
-    ├── erd.dot             # ERD source (Graphviz)
+    ├── erd.dot             # ERD source 
     └── generate_erd.py     # Script that draws the ERD
 ```
 
@@ -222,89 +212,8 @@ erDiagram
 | **DCL** | `CREATE USER`, `GRANT`, `REVOKE` – Part K |
 | **Security** | Parameterised queries (`%s`) prevent SQL injection; console is read-only |
 
-## 8. Run locally – Option A: MySQL + Workbench
 
-1. Install **MySQL Server 8.x + MySQL Workbench** and **Python 3.10+**.
-2. In Workbench: *File → Open SQL Script…* → run `database/01_schema_mysql.sql`, then `database/02_seed_data.sql`. Refresh *Schemas* → `revon_db` with 7 tables.
-   *(Or skip this and let the app do it: `python app.py --init-mysql`.)*
-3. Set your password – either edit `config.py` (`MYSQL_PASSWORD`) or use an environment variable:
-   ```bash
-   # Windows (cmd)           macOS / Linux
-   set MYSQL_PASSWORD=...    export MYSQL_PASSWORD=...
-   ```
-4. Start:
-   ```bash
-   python -m venv venv && source venv/bin/activate     # Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   python app.py
-   ```
-   You should see `[REVON] Connected to MySQL root@localhost:3306/revon_db` and the sidebar badge shows **MySQL connected**.
-5. **Prove the app and Workbench share data:** add a customer in the browser, then `SELECT * FROM revon_db.customers ORDER BY customer_id DESC;` in Workbench.
-
-## 9. Run locally – Option B: SQLite
-
-If MySQL isn't available the app **falls back to SQLite automatically**. To choose it on purpose:
-
-```bash
-DB_ENGINE=sqlite python app.py          # Windows cmd: set DB_ENGINE=sqlite
-python app.py --reset-sqlite            # rebuild the sample database any time
-```
-
-## 10. Deploy to Vercel
-
-The Flask app is exposed to Vercel through `api/index.py`, and `vercel.json` bundles `templates/`, `static/` and `database/`. **Frontend (templates + CSS) and backend (Flask routes) deploy together as one Vercel project.**
-
-### Option 1 – Quick demo (SQLite, no external database)
-1. Push this repo to GitHub ([Section 11](#11-push-to-github)).
-2. On [vercel.com](https://vercel.com) → **Add New → Project** → import the repo → **Deploy** (framework preset: *Other*, no build command).
-3. Optional env var: `SECRET_KEY` = any long random string.
-
-> ⚠️ **Vercel's filesystem is read-only** except `/tmp`, and serverless instances restart often. In this mode the app rebuilds a SQLite database (with the sample data) in `/tmp`, so **changes you make are temporary and may reset**. This is perfect for a live demo, not for real data.
-
-### Option 2 – Persistent data (hosted MySQL) ✅ recommended
-Use any hosted MySQL 8 (e.g. [TiDB Cloud Serverless](https://tidbcloud.com), [Aiven](https://aiven.io), [Railway](https://railway.app), [Clever Cloud](https://www.clever-cloud.com)).
-
-1. Create an empty MySQL database and note host, port, user, password, database name.
-2. Create the tables + sample data **once** from your computer:
-   ```bash
-   export MYSQL_HOST=...  MYSQL_PORT=3306  MYSQL_USER=...  MYSQL_PASSWORD=...  MYSQL_DATABASE=...  MYSQL_SSL=true
-   python app.py --init-mysql-managed        # drops & recreates the tables in THAT database, then seeds
-   ```
-3. In Vercel → **Project → Settings → Environment Variables** add the same `MYSQL_*` variables plus `DB_ENGINE=mysql` and `SECRET_KEY`. Redeploy.
-4. The sidebar badge now shows **MySQL connected** and data persists.
-
-### Deploy from the CLI (alternative)
-```bash
-npm i -g vercel
-vercel login
-vercel --prod
-```
-
-### Environment variables
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `DB_ENGINE` | `auto` | `auto` (MySQL then SQLite), `mysql`, or `sqlite` |
-| `MYSQL_HOST` / `MYSQL_PORT` | `localhost` / `3306` | MySQL server |
-| `MYSQL_USER` / `MYSQL_PASSWORD` | `root` / `root` | Credentials |
-| `MYSQL_DATABASE` | `revon_db` | Database name |
-| `MYSQL_SSL` | off | Set `true` for hosted MySQL that requires TLS |
-| `SQLITE_PATH` | `database/revon.db` (`/tmp/revon.db` on Vercel) | SQLite file |
-| `SECRET_KEY` | dev value | Flask session/flash signing key – **change in production** |
-
-## 11. Push to GitHub
-
-```bash
-cd revon-tms
-git init
-git add .
-git commit -m "REVON hybrid motorcycle management system"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git push -u origin main
-```
-Create the empty repository on github.com first (no README/licence – they already exist here).
-
-## 12. Using the application
+## 8. Using the application
 
 | Page | How to use |
 |------|-----------|
@@ -320,7 +229,7 @@ Create the empty repository on github.com first (no README/licence – they alre
 
 After every insert / update / delete a green message appears together with the SQL statement that was executed.
 
-## 13. How ERD, SQL and Web Interface Work Together
+## 9. How ERD, SQL and Web Interface Work Together
 
 ```
  ┌──────────────┐   HTTP form (GET/POST)   ┌──────────────────────┐   SQL (PyMySQL)   ┌──────────────────┐
@@ -336,7 +245,7 @@ After every insert / update / delete a green message appears together with the S
 4. **Constraints protect data:** the database itself rejects bad data (duplicate order number, negative quantity, delivery before order, deleting a customer who has orders). The app catches the error and explains it.
 5. **SQL → Pages:** lists, dashboard and reports are `SELECT` queries with `JOIN`, `GROUP BY` and sub-queries rendered as HTML tables.
 
-## 14. Testing Constraints (Demo Script)
+## 10. Testing Constraints
 
 | # | Try this in the web app | Constraint | Expected result |
 |---|-------------------------|-----------|-----------------|
@@ -353,7 +262,7 @@ After every insert / update / delete a green message appears together with the S
 
 The same tests as SQL are in `database/03_queries_demo.sql` (Part J). Re-run `01_schema_mysql.sql` + `02_seed_data.sql` (or `python app.py --reset-sqlite`) to restore the sample data.
 
-## 15. Troubleshooting
+## 11. Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
@@ -366,10 +275,33 @@ The same tests as SQL are in `database/03_queries_demo.sql` (Part J). Re-run `01
 | Vercel data disappears | Expected with SQLite in `/tmp` – use a hosted MySQL ([Section 10](#10-deploy-to-vercel), Option 2). |
 | Vercel shows a MySQL SSL / connection error | Set `MYSQL_SSL=true` and allow connections from anywhere (Vercel IPs change) in your DB provider's firewall. |
 
-## 16. Roadmap
+## 12. Future Enhancements
 
-User login with roles (admin / sales / technician), PDF invoices & delivery notes, battery-health tracking per bike, ride-mode (Eco/City/Sport) usage analytics, warranty module, OEM-partner and licensing-revenue tables, SMS/WhatsApp notifications.
+Potential future improvements include:
+
+- Admin and employee authentication.
+- Role-based access control.
+- PDF invoices and delivery receipts.
+- Customer notification system.
+- WhatsApp integration.
+- Motorcycle warranty management.
+- Battery health monitoring.
+- Maintenance reminders.
+- Advanced inventory analytics.
+- Sales performance reporting.
+- Ride-mode usage analytics.
+- Customer order notifications.
+
+## 13. License
+
+This project is licensed under the MIT License.
+
+See the [LICENSE](LICENSE) file for details.
 
 ---
 
-**REVON Hybrid Motorcycle Management System** · NEXGEN · Released under the [MIT License](LICENSE)
+**REVON – Hybrid Motorcycle Management System**
+
+Developed for **NEXGEN Solutions**
+
+*Smarter Mobility. Smarter Management.*
