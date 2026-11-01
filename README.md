@@ -9,7 +9,7 @@ for a hybrid (EV + ICE) motorcycle business — bookings, bike inventory, models
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-### 🌐 Live demo: `https://nexgen-solution-hub.vercel.app/p`
+### 🌐 **Live Demo:** [Nexgen Solution Hub](https://nexgen-solution-hub.vercel.app/)
 
 ## Table of Contents
 
@@ -272,7 +272,7 @@ The same tests as SQL are in `database/03_queries_demo.sql` (Part J). Re-run `01
 | `cryptography package is required` | `pip install cryptography` (already in `requirements.txt`). |
 | Port 5000 already in use | `PORT=5001 python app.py`. |
 | CHECK constraints not enforced | Use MySQL **8.0.16+** (older versions ignore CHECK). |
-| Vercel data disappears | Expected with SQLite in `/tmp` – use a hosted MySQL ([Section 10](#10-deploy-to-vercel), Option 2). |
+| Vercel data disappears | Expected with SQLite in `/tmp` – use a hosted MySQL. |
 | Vercel shows a MySQL SSL / connection error | Set `MYSQL_SSL=true` and allow connections from anywhere (Vercel IPs change) in your DB provider's firewall. |
 
 ## 12. Future Enhancements
